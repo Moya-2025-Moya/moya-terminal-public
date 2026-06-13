@@ -1,7 +1,7 @@
 import type { ProcessStatus, SystemStats, LogsResponse } from "./types";
 
-// Unified position from the droplet /positions store (pm + defi + bot). See
-// docs/positions-api.md - one row, exactly these 14 fields.
+// Unified position from the backend /positions store (pm + defi + bot).
+// One row, exactly these 14 fields.
 export interface UnifiedPosition {
   id: string;
   source: string;
@@ -64,7 +64,7 @@ export const infraApi = {
     return get<LogsResponse>(`/infra/logs/${name}${qs ? `?${qs}` : ""}`);
   },
   errorLogs: (name: string) => get<LogsResponse>(`/infra/logs/${name}/error`),
-  // PnL time-series for the curve (see docs/pnl-readout.md). Uses the read:pnl
+  // PnL time-series for the curve. Uses the read:pnl
   // scoped key (not the master token). Returns [] when empty / unconfigured so
   // callers degrade cleanly.
   pnlSeries: async (opts?: {
@@ -92,8 +92,8 @@ export const infraApi = {
       return [];
     }
   },
-  // Unified cross-source positions (read:positions key). Bare array per
-  // docs/positions-api.md. Returns [] when empty / unconfigured.
+  // Unified cross-source positions (read:positions key). Bare array.
+  // Returns [] when empty / unconfigured.
   positions: async (opts?: { status?: "open" | "closed"; source?: string }): Promise<UnifiedPosition[]> => {
     const KEY = process.env.POLY_POSITIONS_READ_KEY;
     if (!BASE || !KEY) return [];

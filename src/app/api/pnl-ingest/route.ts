@@ -3,7 +3,7 @@ import { isAuthorizedRequest, unauthorizedJson } from "@/lib/auth";
 
 // Server-side PnL snapshot writer. The browser sends a snapshot's values; we
 // stamp the time, HMAC-sign with the write:pnl key (secret never reaches the
-// client - see docs/pnl-ingest.md), and forward to the droplet /pnl/ingest.
+// client), and forward to the backend /pnl/ingest.
 
 const BASE = process.env.INFRA_API_URL;
 const KEY_ID = process.env.POLY_PNL_WRITE_KEY_ID;
