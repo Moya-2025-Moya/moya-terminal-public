@@ -9,7 +9,6 @@ import { MoneyStrip } from "@/components/MoneyStrip";
 import type { UnifiedPosition } from "@/lib/infra-api";
 import { useAttention } from "@/lib/useAttention";
 import { recordNav, useEquityHistory } from "@/lib/pm-equity";
-import { reportPolymarketNav } from "@/lib/pm-pnl-report";
 
 type Defi = { net: number | null; assets: number | null; debt: number | null };
 type Point = { ts: number; value: number };
@@ -32,12 +31,13 @@ export function OverviewDashboard({
   const deployed = a.positions + defiNet;
   const totalNav = a.cash + deployed;
 
-  // Local NAV snapshot (instant curve) + push live Polymarket equity to the store.
+  // Local NAV snapshot (instant curve). The `polymarket` PnL source is owned by
+  // the API-Infra reporter now — the client must NOT push it (it only had a
+  // partial view and fought other writers, causing flip-flopping numbers).
   const localHistory = useEquityHistory();
   useEffect(() => {
     if (totalNav > 0) recordNav(totalNav, Date.now());
-    if (a.connected) reportPolymarketNav({ equity: a.cash + a.positions, unrealized_pnl: a.pnl, cash: a.cash });
-  }, [totalNav, a.connected, a.cash, a.positions, a.pnl]);
+  }, [totalNav]);
   const equity = pnlSeries.length >= 2 ? pnlSeries : localHistory;
 
   return (
